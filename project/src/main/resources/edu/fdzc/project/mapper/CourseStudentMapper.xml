@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.fdzc.project.mapper.CourseStudentMapper">
+
+    <resultMap id="BaseResultMap" type="edu.fdzc.project.entity.CourseStudent">
+            <id property="id" column="id" />
+            <result property="courseId" column="course_id" />
+            <result property="studentId" column="student_id" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,course_id,student_id
+    </sql>
+    <select id="selectStudentPage" resultType="edu.fdzc.project.entity.Student">
+        select s.id, no, name
+        from course_student sc
+        left join student s on sc.student_id=s.id
+        <where>
+            course_id = #{id}
+            <if test="no != null and no != ''">
+                and no like '%${no}%'
+            </if>
+            <if test="name != null and name != ''">
+                and name like '%${name}%'
+            </if>
+        </where>
+        limit #{size}
+        offset #{offset}
+    </select>
+    <select id="selectStudentCount" resultType="java.lang.Long">
+        select count(s.id)
+        from course_student sc
+        left join student s on sc.student_id=s.id
+        <where>
+            course_id = #{id}
+            <if test="no != null and no != ''">
+                and no like '%${no}%'
+            </if>
+            <if test="name != null and name != ''">
+                and name like '%${name}%'
+            </if>
+        </where>
+    </select>
+</mapper>

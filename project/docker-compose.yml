@@ -1,0 +1,109 @@
+#version: '3.8'
+#
+#services:
+#  minio:
+#    image: minio/minio:latest
+#    container_name: minio
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    environment:
+#      MINIO_ROOT_USER: ZGJiu
+#      MINIO_ROOT_PASSWORD: 12345678
+#    volumes:
+#      - minio-data:/data
+#    command: server --console-address ":9001" /data
+#    healthcheck:
+#      # 优化健康检查命令（直接使用MinIO的健康端点）
+#      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#
+#  kkfileview:
+#    image: keking/kkfileview:latest
+#    container_name: kkfileview
+#    ports:
+#      - "8012:8012"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: "minio"
+#      # 关键修复：确保使用服务名而非IP
+#      SPRING_MINIO_ENDPOINT: "http://minio:9000"
+#      SPRING_MINIO_ACCESSKEY: "ZGJiu"
+#      SPRING_MINIO_SECRETKEY: "12345678"
+#      SPRING_MINIO_BUCKETNAME: "kkfileview"
+#      # 添加显式网络声明
+#    depends_on:
+#      minio:
+#        condition: service_healthy
+#    # 添加健康检查（验证KKFileView是否就绪）
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:8012"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 12
+#
+#volumes:
+#  minio-data:
+#
+## 关键添加：显式网络配置
+#networks:
+#  default:
+#    name: minio-kkfileview-net
+#    driver: bridge
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"   # API端口（核心服务端口）
+      - "9090:9090"    # Console端口（建议使用9090而非9001，保持与日志一致）
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - minio-data:/data
+    command: server --console-address ":9090" /data  # 修改控制台端口为9090
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]  # 使用健康检查端点
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - minio-kk-net  # 显式加入自定义网络
+
+  kkfileview:
+    image: keking/kkfileview:latest
+    container_name: kkfileview
+    ports:
+      - "8012:8012"
+    environment:
+      # 使用标准环境变量名（官方文档要求）
+      MINIO_ENDPOINT: "http://minio:9000"   # 关键：使用服务名而非IP
+      MINIO_ACCESS_KEY: "ZGJiu"             # 修正变量名格式
+      MINIO_SECRET_KEY: "12345678"          # 修正变量名格式
+      MINIO_BUCKET_NAME: "kkfileview"       # 修正变量名格式
+
+      # 必须添加的信任主机配置
+      SERVER_TRUST_HOSTS: "localhost,minio"
+    depends_on:
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8012"]  # 检查自身健康
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - minio-kk-net  # 显式加入自定义网络
+
+volumes:
+  minio-data:
+
+# 网络配置（关键修复）
+networks:
+  minio-kk-net:
+    driver: bridge
+    name: minio-kk-net   # 指定网络名称

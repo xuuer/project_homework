@@ -1,0 +1,25 @@
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+#app {
+  height: 100%;
+}
+a {
+  text-decoration: none;
+}
+.tox-tinymce-aux {
+  z-index: 5000!important;
+}
+.el-pagination {
+  justify-content: center;
+}
+.splitpanes {
+  .splitpanes__pane {
+    transition: none !important;
+  }
+}

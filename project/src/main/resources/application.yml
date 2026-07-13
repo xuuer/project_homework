@@ -1,0 +1,45 @@
+#spring.application.name=project
+
+
+spring:
+  application:
+    name: project
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/net
+    username: root
+    password: 1234567
+  #    password: zml2549292709
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+# MinIO 对象存储配置
+minio:
+  endpoint: "http://8.148.218.255:9000"          # MinIO服务地址
+  accessKey: "minio"                    # MinIO访问密钥
+  secretKey: "minio123"                    # MinIO秘密密钥
+  bucketName: "kkfileview"                # 存储桶名称
+
+
+# 文件预览服务配置
+kkFileViewServer: "http://localhost:8012/onlinePreview?url="
+
+
+
+# coze 配置
+coze:
+  url: "https://api.coze.cn/v1/workflow/stream_run"
+  url2: "https://api.coze.cn/v1/workflow/run"
+  token: "cztei_qsPPcgWnTSIvqeOqRQwYOki4JFRTIxZ6XFHOx0jhSiKjrzxeAnUy06oPUQI0ZB9Qv"
+  workflowId: "your-workflow-id"
+  workflowId2: "7526456413612015667"
+  workflowId3: "your-workflow-id3"
+  workflowId4: "your-workflow-id4"
+  workflowId5: "7533921184594985023"
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+mybatis-plus:
+  mapper-locations: classpath*:edu.fdzc.project.mapper/*.xml

@@ -1,0 +1,21 @@
+package edu.fdzc.project.entity.vo;
+
+import edu.fdzc.project.entity.TagNode;
+import edu.fdzc.project.entity.TagRelationship;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+
+import java.util.List;
+
+@Data
+@Schema(title = "知识图谱VO")
+public class TagVo {
+
+    @Schema(name = "知识点节点")
+    private List<TagNode> nodes;
+
+    @Schema(name = "知识点关系")
+    private List<TagRelationship> links;
+
+}
